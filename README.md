@@ -16,16 +16,16 @@ File awal yang diberikan melalui Google Classroom. Notebook ini menjadi referens
 
 Versi yang telah diperbaiki agar pipeline utama dapat berjalan. Notebook ini menjalankan satu fine-tuning dengan konfigurasi LoRA standar.
 
-Perbaikan yang diterapkan meliputi:
+Perbaikan yang diterapkan adalah sebagai berikut.
 
-- Kompatibilitas `warmup_ratio` dan `warmup_steps`.
-- BF16 hanya diaktifkan jika hardware mendukung.
-- Kompatibilitas argumen `SFTTrainer`, termasuk `max_length`, `max_seq_length`, `tokenizer`, dan `processing_class`.
-- Penanganan `packing` dan `dataset_kwargs` berdasarkan versi TRL.
-- Instalasi `torchao>=0.16.0` untuk kompatibilitas dengan PEFT.
-- Fallback `chat_template` untuk tokenizer yang tidak memiliki template.
-- Perbaikan path adapter, model merge, dan inference lokal.
-- Progress training detail: step, loss, epoch, learning rate, elapsed time, dan ETA.
+1. Kompatibilitas `warmup_ratio` dan `warmup_steps`.
+2. BF16 hanya diaktifkan jika hardware mendukung.
+3. Kompatibilitas argumen `SFTTrainer`, termasuk `max_length`, `max_seq_length`, `tokenizer`, dan `processing_class`.
+4. Penanganan `packing` dan `dataset_kwargs` berdasarkan versi TRL.
+5. Instalasi `torchao>=0.16.0` untuk kompatibilitas dengan PEFT.
+6. Fallback `chat_template` untuk tokenizer yang tidak memiliki template.
+7. Perbaikan path adapter, model merge, dan inference lokal.
+8. Progress training detail yang menampilkan step, loss, epoch, learning rate, elapsed time, dan ETA.
 
 [Buka LoRA-default.ipynb di Google Colab](https://colab.research.google.com/github/haqiqien/LoRA/blob/main/LoRA-default.ipynb)
 
@@ -49,15 +49,15 @@ Konfigurasi dengan training loss terendah adalah `r8_a16_d005_all`. Nilai ini ha
 
 ## Konfigurasi umum training
 
-- Model: `HuggingFaceTB/SmolLM2-135M`
-- Dataset: `HuggingFaceTB/smoltalk`
-- Epoch: `1`
-- Learning rate: `2e-4`
-- Batch size per device: `2`
-- Gradient accumulation: `2`
-- Sequence length: `1512`
-- Optimizer: AdamW
-- Metode: supervised fine-tuning dengan `SFTTrainer` dan PEFT LoRA
+1. Model menggunakan `HuggingFaceTB/SmolLM2-135M`.
+2. Dataset menggunakan `HuggingFaceTB/smoltalk`.
+3. Training dilakukan selama `1` epoch.
+4. Learning rate yang digunakan adalah `2e-4`.
+5. Batch size per device adalah `2`.
+6. Gradient accumulation menggunakan nilai `2`.
+7. Sequence length yang digunakan adalah `1512`.
+8. Optimizer yang digunakan adalah AdamW.
+9. Metode training menggunakan supervised fine-tuning dengan `SFTTrainer` dan PEFT LoRA.
 
 ## Cara menjalankan
 
@@ -72,20 +72,23 @@ Gunakan `LoRA-default.ipynb` untuk satu proses fine-tuning. Gunakan `LoRA-exp.ip
 
 ## Output
 
-Output utama yang dihasilkan:
+Output utama yang dihasilkan adalah sebagai berikut.
 
-- Folder adapter default sesuai `output_dir`.
-- Folder eksperimen dengan pola `SmolLM2-FT-MyDataset-exp-<nama-run>`.
-- File `lora_experiment_results.csv` berisi metrik setiap run.
-- Folder `merged` untuk model LoRA yang sudah digabungkan dengan model dasar.
-- Output inference dari empat prompt evaluasi.
+1. Folder adapter default sesuai `output_dir`.
+2. Folder eksperimen dengan pola `SmolLM2-FT-MyDataset-exp-<nama-run>`.
+3. File `lora_experiment_results.csv` berisi metrik setiap run.
+4. Folder `merged` untuk model LoRA yang sudah digabungkan dengan model dasar.
+5. Output inference dari empat prompt evaluasi.
 
 ## Laporan dan screenshot
 
-- [Laporan Markdown](Laporan-Tugas-LoRA.md)
-- [Laporan LaTeX](Laporan-Tugas-LoRA.tex)
-- [Template screenshot](Template-Screenshot-LoRA.md)
-- Folder [screenshots](screenshots/)
+Laporan Markdown tersedia pada [Laporan-Tugas-LoRA.md](Laporan-Tugas-LoRA.md).
+
+Laporan LaTeX tersedia pada [Laporan-Tugas-LoRA.tex](Laporan-Tugas-LoRA.tex).
+
+Template screenshot tersedia pada [Template-Screenshot-LoRA.md](Template-Screenshot-LoRA.md).
+
+Seluruh screenshot tersedia pada folder [screenshots](screenshots/).
 
 Laporan membahas perbedaan notebook original dan notebook hasil perbaikan, eksperimen parameter LoRA, training loss, hasil inference, analisis, kesimpulan, dan AI Usage Disclosure.
 
