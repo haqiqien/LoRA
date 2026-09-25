@@ -1,76 +1,111 @@
-# Fine-Tuning LLM dengan LoRA
+# Eksperimen Fine-Tuning LLM dengan LoRA
 
-Repositori ini berisi dua notebook untuk melakukan fine-tuning model bahasa menggunakan **LoRA (Low-Rank Adaptation)** dengan library Hugging Face: `transformers`, `datasets`, `trl`, dan `peft`.
+Repository ini berisi pekerjaan fine-tuning `HuggingFaceTB/SmolLM2-135M` menggunakan LoRA, Hugging Face Transformers, Datasets, TRL, dan PEFT.
 
-Model yang digunakan adalah `HuggingFaceTB/SmolLM2-135M`, sedangkan dataset contoh yang digunakan adalah `HuggingFaceTB/smoltalk` dengan konfigurasi `everyday-conversations`.
+Repository GitHub: <https://github.com/haqiqien/LoRA>
 
-## Notebook
+Dataset yang digunakan adalah `HuggingFaceTB/smoltalk` dengan konfigurasi `everyday-conversations`.
 
-### 1. Fine-tuning standar
+## Struktur dan peran file
 
-[`LoRA-default.ipynb`](LoRA-default.ipynb) menjalankan satu proses fine-tuning dengan satu konfigurasi LoRA.
+### `section4.ipynb` — Notebook Original Google Classroom
+
+File awal yang diberikan melalui Google Classroom. Notebook ini menjadi referensi awal, tetapi mengalami beberapa error ketika dijalankan di Google Colab karena perbedaan versi library dan keterbatasan hardware runtime.
+
+### `LoRA-default.ipynb` — Notebook Fine-Tuning Utama
+
+Versi yang telah diperbaiki agar pipeline utama dapat berjalan. Notebook ini menjalankan satu fine-tuning dengan konfigurasi LoRA standar.
+
+Perbaikan yang diterapkan meliputi:
+
+- Kompatibilitas `warmup_ratio` dan `warmup_steps`.
+- BF16 hanya diaktifkan jika hardware mendukung.
+- Kompatibilitas argumen `SFTTrainer`, termasuk `max_length`, `max_seq_length`, `tokenizer`, dan `processing_class`.
+- Penanganan `packing` dan `dataset_kwargs` berdasarkan versi TRL.
+- Instalasi `torchao>=0.16.0` untuk kompatibilitas dengan PEFT.
+- Fallback `chat_template` untuk tokenizer yang tidak memiliki template.
+- Perbaikan path adapter, model merge, dan inference lokal.
+- Progress training detail: step, loss, epoch, learning rate, elapsed time, dan ETA.
 
 [Buka LoRA-default.ipynb di Google Colab](https://colab.research.google.com/github/haqiqien/LoRA/blob/main/LoRA-default.ipynb)
 
-Notebook ini mencakup:
+### `LoRA-exp.ipynb` — Notebook Eksperimen Hyperparameter
 
-- Instalasi library dan autentikasi Hugging Face.
-- Pemanggilan dataset percakapan.
-- Pemuatan model dan tokenizer.
-- Konfigurasi LoRA dengan `SFTTrainer`.
-- Penyesuaian API TRL untuk beberapa versi library.
-- Pemilihan otomatis precision `bf16` hanya pada hardware yang mendukungnya.
-- Progress training secara detail, termasuk step, loss, learning rate, epoch, waktu berjalan, dan ETA.
-- Penyimpanan adapter LoRA dan pengujian inference.
+File ini digunakan untuk menjalankan beberapa eksperimen LoRA. Setiap run memuat model baru, mengubah parameter, menyimpan adapter di folder berbeda, dan mencatat training loss.
 
-### 2. Eksperimen beberapa konfigurasi
+Konfigurasi yang dicoba:
 
-[`LoRA-exp.ipynb`](LoRA-exp.ipynb) digunakan untuk membandingkan beberapa konfigurasi LoRA dalam beberapa run terpisah.
+| Run | Rank | Alpha | Dropout | Target modules | Training loss |
+|---|---:|---:|---:|---|---:|
+| Default | 6 | 8 | 0.05 | `all-linear` | 1.8389 |
+| `r4_a8_d005_all` | 4 | 8 | 0.05 | `all-linear` | 1.8291 |
+| `r8_a16_d005_all` | 8 | 16 | 0.05 | `all-linear` | **1.6855** |
+| `r8_a16_d010_qv` | 8 | 16 | 0.10 | `q_proj`, `v_proj` | 2.1138 |
+| `r16_a32_d010_qv` | 16 | 32 | 0.10 | `q_proj`, `v_proj` | 1.9363 |
+
+Konfigurasi dengan training loss terendah adalah `r8_a16_d005_all`. Nilai ini hanya berasal dari data training karena eksperimen belum menggunakan validation split.
 
 [Buka LoRA-exp.ipynb di Google Colab](https://colab.research.google.com/github/haqiqien/LoRA/blob/main/LoRA-exp.ipynb)
 
-Konfigurasi eksperimen yang tersedia:
+## Konfigurasi umum training
 
-| Run | Rank | Alpha | Dropout | Target modules |
-|---|---:|---:|---:|---|
-| `r4_a8_d005_all` | 4 | 8 | 0.05 | `all-linear` |
-| `r8_a16_d005_all` | 8 | 16 | 0.05 | `all-linear` |
-| `r8_a16_d010_qv` | 8 | 16 | 0.10 | `q_proj`, `v_proj` |
-| `r16_a32_d010_qv` | 16 | 32 | 0.10 | `q_proj`, `v_proj` |
-
-Setiap run memuat model baru, melatih adapter secara terpisah, menyimpan hasil ke folder berbeda, dan mencatat metrik training. Ringkasan hasil disimpan sebagai `lora_experiment_results.csv`.
-
-## Perbedaan kedua notebook
-
-| Aspek | `LoRA-default.ipynb` | `LoRA-exp.ipynb` |
-|---|---|---|
-| Tujuan | Fine-tuning satu model dengan satu konfigurasi | Membandingkan beberapa konfigurasi LoRA |
-| Jumlah run | Satu run | Empat run berurutan |
-| Parameter LoRA | Menggunakan konfigurasi default: rank 6, alpha 8, dropout 0.05 | Mengubah rank, alpha, dropout, dan target modules pada setiap run |
-| Output | Satu folder model hasil fine-tuning | Satu folder untuk setiap konfigurasi eksperimen |
-| Evaluasi | Menguji model hasil training melalui inference | Membandingkan loss dan waktu training dalam tabel hasil |
-| Waktu dan memori | Lebih cepat dan ringan | Lebih lama dan membutuhkan memori lebih besar |
-
-Gunakan `LoRA-default.ipynb` untuk mencoba alur fine-tuning dengan cepat. Gunakan `LoRA-exp.ipynb` jika ingin menganalisis pengaruh hyperparameter LoRA terhadap hasil training.
+- Model: `HuggingFaceTB/SmolLM2-135M`
+- Dataset: `HuggingFaceTB/smoltalk`
+- Epoch: `1`
+- Learning rate: `2e-4`
+- Batch size per device: `2`
+- Gradient accumulation: `2`
+- Sequence length: `1512`
+- Optimizer: AdamW
+- Metode: supervised fine-tuning dengan `SFTTrainer` dan PEFT LoRA
 
 ## Cara menjalankan
 
-1. Buka salah satu notebook melalui Google Colab atau Jupyter.
-2. Gunakan runtime GPU jika tersedia. Training CPU dapat berjalan lebih lambat.
+1. Buka notebook melalui Google Colab.
+2. Pilih runtime GPU jika tersedia.
 3. Jalankan cell secara berurutan dari atas ke bawah.
-4. Saat diminta, login ke Hugging Face menggunakan access token.
-5. Jika library baru saja di-install, restart kernel/runtime sebelum menjalankan cell berikutnya.
+4. Login ke Hugging Face jika diminta.
+5. Setelah instalasi package selesai, restart runtime/kernel.
+6. Jalankan ulang notebook dari awal.
 
-Untuk eksperimen, jalankan seluruh cell hingga cell eksperimen dan tunggu semua run selesai. Empat run membutuhkan waktu dan memori lebih besar daripada `LoRA-default.ipynb`.
+Gunakan `LoRA-default.ipynb` untuk satu proses fine-tuning. Gunakan `LoRA-exp.ipynb` untuk menjalankan empat eksperimen secara berurutan. Notebook eksperimen membutuhkan waktu dan memori lebih besar.
 
 ## Output
 
-- Adapter/model hasil training disimpan di folder output yang ditentukan oleh `output_dir`.
-- Notebook eksperimen membuat folder dengan pola `SmolLM2-FT-MyDataset-exp-<nama-run>`.
-- Hasil perbandingan eksperimen disimpan di `lora_experiment_results.csv`.
+Output utama yang dihasilkan:
 
-## Catatan dependensi
+- Folder adapter default sesuai `output_dir`.
+- Folder eksperimen dengan pola `SmolLM2-FT-MyDataset-exp-<nama-run>`.
+- File `lora_experiment_results.csv` berisi metrik setiap run.
+- Folder `merged` untuk model LoRA yang sudah digabungkan dengan model dasar.
+- Output inference dari empat prompt evaluasi.
 
-Notebook memasang `torchao>=0.16.0` karena versi `peft` yang digunakan memerlukan versi tersebut. Setelah instalasi atau upgrade package, restart runtime agar versi package yang baru digunakan.
+## Laporan dan screenshot
 
-Pastikan akun Hugging Face memiliki izin untuk mengakses model atau dataset yang digunakan. Jangan membagikan access token di dalam notebook.
+- [Laporan Markdown](Laporan-Tugas-LoRA.md)
+- [Laporan LaTeX](Laporan-Tugas-LoRA.tex)
+- [Template screenshot](Template-Screenshot-LoRA.md)
+- Folder [screenshots](screenshots/)
+
+Laporan membahas perbedaan notebook original dan notebook hasil perbaikan, eksperimen parameter LoRA, training loss, hasil inference, analisis, kesimpulan, dan AI Usage Disclosure.
+
+## Membuat PDF laporan
+
+Pastikan MiKTeX atau TeX Live sudah terpasang. Dari Git Bash, jalankan:
+
+```bash
+cd "/c/Users/kyous/Downloads/En/s2/smt2/kapita selekta/LoRA"
+mkdir -p pdf
+pdflatex -interaction=nonstopmode -halt-on-error \
+  -output-directory=pdf \
+  Laporan-Tugas-LoRA.tex
+pdflatex -interaction=nonstopmode -halt-on-error \
+  -output-directory=pdf \
+  Laporan-Tugas-LoRA.tex
+```
+
+PDF akan tersimpan di `pdf/Laporan-Tugas-LoRA.pdf`.
+
+## Catatan keamanan
+
+Jangan memasukkan Hugging Face access token ke dalam file notebook atau repository. Gunakan login Colab secara aman dan pastikan model/dataset dapat diakses oleh akun yang digunakan.

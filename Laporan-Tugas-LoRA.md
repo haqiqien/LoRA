@@ -1,5 +1,9 @@
 # Laporan Eksperimen LoRA
 
+**Nama:** Juyus Muhammad Adinulhaq  
+**NIM:** 25/572923/PPA/07202  
+**Mata Kuliah:** Kapita Selekta Ilmu Komputer
+
 Notebook yang digunakan adalah [`section4.ipynb`](section4.ipynb), versi hasil perbaikan [`LoRA-default.ipynb`](LoRA-default.ipynb), dan notebook eksperimen [`LoRA-exp.ipynb`](LoRA-exp.ipynb).
 
 ### Identitas dan peran file
@@ -45,56 +49,43 @@ Tambahkan screenshot pada lokasi berikut. Simpan gambar dalam folder `screenshot
 
 **Tujuan:** menunjukkan masalah saat `section4.ipynb` dijalankan.
 
-```text
-[TEMPEL SCREENSHOT ERROR SECTION4 DI SINI]
-Caption: Gambar 1. Error pada section4.ipynb saat dijalankan di Google Colab.
-```
+![Gambar 1 - Error section4](screenshots/01-error-section4.png)
 
-File yang disarankan: `screenshots/01-error-section4.png`
+*Gambar 1. Error pada `section4.ipynb` saat dijalankan di Google Colab.*
 
 #### Screenshot 2 — Konfigurasi yang sudah diperbaiki
 
 **Tujuan:** menunjukkan fallback API, pemilihan precision, atau konfigurasi training pada `LoRA-default.ipynb`.
 
-```text
-[TEMPEL SCREENSHOT KONFIGURASI PERBAIKAN DI SINI]
-Caption: Gambar 2. Konfigurasi kompatibel pada LoRA-default.ipynb.
-```
+![Gambar 2 - Konfigurasi perbaikan](screenshots/02-konfigurasi-perbaikan.png)
 
-File yang disarankan: `screenshots/02-konfigurasi-perbaikan.png`
+*Gambar 2. Konfigurasi kompatibel pada `LoRA-default.ipynb`.*
 
 #### Screenshot 3 — Progress training
 
 **Tujuan:** menunjukkan training berjalan dan loss berubah dari waktu ke waktu.
 
-```text
-[TEMPEL SCREENSHOT PROGRESS TRAINING DI SINI]
-Caption: Gambar 3. Progress training yang menampilkan step, loss, epoch, dan ETA.
-```
+![Gambar 3 - Progress training](screenshots/03-progress-training.png)
 
-File yang disarankan: `screenshots/03-progress-training.png`
+*Gambar 3. Progress training yang menampilkan step, loss, epoch, dan ETA.*
 
 #### Screenshot 4 — Tabel hasil eksperimen
 
 **Tujuan:** menunjukkan perbandingan `rank`, `alpha`, `dropout`, target modules, dan `train_loss`.
 
-```text
-[TEMPEL SCREENSHOT TABEL TRAINING LOSS DI SINI]
-Caption: Gambar 4. Perbandingan hasil training dari beberapa konfigurasi LoRA.
-```
+![Gambar 4 - Tabel training loss](screenshots/04-tabel-training-loss.png)
 
-File yang disarankan: `screenshots/04-tabel-training-loss.png`
+*Gambar 4. Perbandingan hasil training dari beberapa konfigurasi LoRA.*
 
 #### Screenshot 5 — Perbandingan output inference
 
 **Tujuan:** menunjukkan output empat prompt setelah fine-tuning. Jika baseline sudah dijalankan ulang, tampilkan baseline dan hasil fine-tuning berdampingan.
 
-```text
-[TEMPEL SCREENSHOT OUTPUT BASELINE DAN FINE-TUNING DI SINI]
-Caption: Gambar 5. Perbandingan output model sebelum dan sesudah fine-tuning.
-```
+![Gambar 5a - Output inference](screenshots/05-perbandingan-inference-01.png)
 
-File yang disarankan: `screenshots/05-perbandingan-inference.png`
+![Gambar 5b - Output inference](screenshots/05-perbandingan-inference-02.png)
+
+*Gambar 5a-b. Output inference dari empat prompt setelah fine-tuning.*
 
 ## Eksperimen
 
