@@ -64,7 +64,7 @@ Beberapa perbaikan utama dari notebook original adalah sebagai berikut.
 \toprule
 \textbf{Bagian} & \textbf{Masalah awal} & \textbf{Perbaikan} \\
 \midrule
-Package & Versi \texttt{torchao} tidak cocok dengan \texttt{peft}. & Memasang \texttt{torchao>=0.16.0}. \\
+Package & Lingkungan Colab menampilkan peringatan kompatibilitas \texttt{torchao}. & Menyamakan versi \texttt{torchao} sebelum menjalankan training. \\
 Warmup & Langsung memakai \texttt{warmup\_ratio}. & Memilih \texttt{warmup\_ratio} atau \texttt{warmup\_steps} sesuai versi TRL. \\
 Precision & \texttt{bf16=True} selalu aktif. & BF16 hanya aktif jika hardware mendukung. \\
 Trainer API & Memakai nama argumen lama secara langsung. & Memeriksa dukungan \texttt{max\_length}, \texttt{max\_seq\_length}, \texttt{tokenizer}, dan \texttt{processing\_class}. \\
@@ -74,7 +74,7 @@ Model path & Folder lokal dianggap sebagai repository Hugging Face. & Menggunaka
 \bottomrule
 \end{longtable}
 
-Perubahan diatas terutama diperlukan agar notebook bisa mengikuti versi library yang tersedia di Google Colab.
+Perubahan di atas terutama diperlukan agar notebook bisa mengikuti versi library yang tersedia di Google Colab.
 
 \section{Eksperimen}
 
@@ -83,6 +83,10 @@ batch size \texttt{2}, gradient accumulation \texttt{2}, dan sequence length
 \texttt{1512}. Notebook default memakai rank 6, alpha 8, dropout 0.05, dan
 target \texttt{all-linear}. Pada notebook eksperimen, parameter tersebut
 diubah pada setiap run.
+
+Implementasi ini adalah LoRA biasa, bukan QLoRA. Walaupun beberapa komentar
+kode menggunakan rekomendasi hyperparameter dari QLoRA, model tidak dimuat
+dengan kuantisasi 4-bit dan tidak menggunakan \texttt{BitsAndBytesConfig}.
 
 \begin{table}[H]
 \centering
@@ -103,7 +107,9 @@ Default & 6 & 8 & 0.05 & \texttt{all-linear} & 1.8389 \\
 
 Run dengan hasil loss paling rendah adalah \texttt{r8\_a16\_d005\_all}.
 Namun, nilai ini hanya berasal dari data training karena eksperimen belum
-memakai validation split.
+memakai validation split. Karena setiap run hanya dilakukan sekali, hasil ini
+sebaiknya dianggap sebagai perbandingan eksploratif, bukan bukti bahwa
+konfigurasi tersebut selalu paling baik.
 
 \section{Hasil Inference}
 
@@ -115,7 +121,7 @@ memakai validation split.
 \midrule
 Ibu kota Jerman & Belum tercatat pada notebook awal. & Model menjawab Berlin, tetapi kemudian mencampur percakapan dan fakta lain. \\
 Fungsi factorial Python & Belum tercatat. & Model menjelaskan factorial, tetapi tidak memberikan kode Python. \\
-Pagar 25 x 15 kaki & Belum tercatat. & Model menjawab 25 kaki, padahal jawaban yang benar adalah $2(25+15)=80$ kaki. \\
+Pagar 25 x 15 kaki & Belum tercatat. & Pada awal respons model menyebut 25 kaki, padahal jawaban yang benar adalah $2(25+15)=80$ kaki; respons berikutnya juga tidak konsisten. \\
 Buah dan sayur & Belum tercatat. & Jawaban masih berhubungan dengan prompt, tetapi definisinya kabur dan berulang. \\
 \bottomrule
 \end{longtable}
@@ -191,6 +197,5 @@ banyak masih diperlukan.
 AI digunakan untuk membantu menganalisis error notebook, memperbaiki
 kompatibilitas library, menyusun variasi eksperimen, merangkum output, dan
 menyusun draf laporan. Nilai loss dan ringkasan output diambil dari notebook.
-Pemeriksaan hasil dan kesimpulan akhir tetap menjadi tanggung jawab penulis.
 
 \end{document}
